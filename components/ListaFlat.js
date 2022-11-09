@@ -1,14 +1,36 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Text } from 'react-native';
+import { Button, View, FlatList, StyleSheet, Text, TextInput } from 'react-native';
 import { useState } from 'react'
+import axios from 'axios';
 
 
 
 export default function ListaFlat() {
 
   const api = require('../assets/mock.json')
-
+  const key = 'cd6a6dcf37771d34beb24817c6c3fd40'
   const [response, setResponse] = useState(api);
+  const [cidade, setCidade] = useState('');
+
+  const getCidade = async () => {
+    console.log(`http://api.openweathermap.org/geo/1.0/direct?q=${cidade}&appid=${key}`)
+    await axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${cidade}&appid=${key}`)
+      .then(response => {
+        console.log(response)
+        getPrevisao(response.data[0].lat, response.data[0].lon)
+      })
+      .catch(response => {
+        alert('Digite uma cidade válida!')
+        console.log('Erro')
+      })
+  };
+
+  const getPrevisao = async (lat, lon) => {
+    console.log(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${key}`)
+    const {data} = await axios.get(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${key}&units=metric`)
+    console.log(data)
+    setResponse(data);
+  };
 
   function timeConverter(timestamp) {
     let a = new Date(timestamp * 1000);
@@ -42,6 +64,15 @@ export default function ListaFlat() {
 
   return (
     <View>
+      <TextInput
+        placeholder='Digite a cidade'
+        value={cidade}
+        onChangeText={text => setCidade(text)}
+      />
+      <Button
+        title='Pesquisar'
+        onPress={getCidade}
+      />
       <Text style={styles.local}>{response.city.name}</Text>
       <FlatList
         data={response.list}
