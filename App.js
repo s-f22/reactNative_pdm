@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet,StatusBar } from 'react-native';
 import ListaFlat from './components/ListaFlat';
 import { React, useState } from 'react';
 import { Tab, Text, TabView } from '@rneui/themed';
@@ -9,6 +9,7 @@ export default function App() {
 
   return (
     <>
+    <StatusBar/>
       <Tab
         value={index}
         onChange={(e) => setIndex(e)}
