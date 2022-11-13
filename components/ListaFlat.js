@@ -1,7 +1,10 @@
 import { React, useState } from 'react'
 import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
 import axios from 'axios';
-import { ListItem, Avatar } from '@rneui/themed'
+import { ListItem, Avatar, Icon } from '@rneui/themed'
+import moment from 'moment/min/moment-with-locales';
+import { verificarIcone } from '../functions/verificarIcones';
+
 
 
 export default function ListaFlat() {
@@ -10,12 +13,12 @@ export default function ListaFlat() {
   const baseUrl = "api.openweathermap.org/data/2.5/forecast"
   const apiKey = "cd6a6dcf37771d34beb24817c6c3fd40";
 
-  const [response, setResponse] = useState(mockData);
+  const [response, setResponse] = useState({});
   const [cidade, setCidade] = useState('');
 
   const requestUrl = `https://${baseUrl}?q=${cidade}&cnt&units=metric&lang=pt_br&appid=${apiKey}`;
 
-
+  moment.locale('pt-br');
 
   const getPrevisao = async () => {
     console.log('Request: ', requestUrl);
@@ -44,13 +47,28 @@ export default function ListaFlat() {
   );
 */
 
+
+
   const renderItem = ({ item }) => (
     <ListItem bottomDivider>
-      <Avatar source={{ uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg' }} />
-      <ListItem.Content style={styles.card}>
-        <ListItem.Title>{item.dt_txt}</ListItem.Title>
-        <ListItem.Subtitle>{item.main.temp_max}</ListItem.Subtitle>
-        <ListItem.Subtitle>{item.main.temp_min}</ListItem.Subtitle>
+      <Icon
+        name={verificarIcone(item.weather[0].main)}
+        type='feather'
+        color='#517fa4'
+        style={{marginStart: '10%'}}
+      />
+      <ListItem.Content style={styles.cardInfos}>
+        <ListItem.Title>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
+        <View style={styles.temperaturas}>
+          <View style={styles.maxmin}>
+            <Text style={{textAlign: 'center'}}>Temp. Max: </Text>
+            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_max} °C</ListItem.Subtitle>
+          </View>
+          <View style={styles.maxmin}>
+            <Text style={{textAlign: 'center'}}>Temp. Min: </Text>
+            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_min} °C</ListItem.Subtitle>
+          </View>
+        </View>
       </ListItem.Content>
       <ListItem.Chevron />
     </ListItem>
@@ -58,7 +76,7 @@ export default function ListaFlat() {
 
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         placeholder='Digite a cidade'
         value={cidade}
@@ -70,7 +88,7 @@ export default function ListaFlat() {
         onPress={() => getPrevisao()}
         style={styles.botaoPesquisar}
       >
-        <Text style={{textAlign: 'center'}} >Pesquisar</Text>
+        <Text style={{ textAlign: 'center' }} >Pesquisar</Text>
       </TouchableOpacity>
       {
         Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>
@@ -86,20 +104,20 @@ export default function ListaFlat() {
 
 const styles = StyleSheet.create({
 
-  item: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#6600cc',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+  container: {
+    //   //flex: 1,
+    //   //width: '100%',
+    //   //height: '100%',
+    //   alignItems: 'center',
+    //   backgroundColor: 'steelblue',
+
   },
   infos: {
     fontSize: 26,
     color: 'white'
   },
   local: {
-    marginTop: 30,
+    marginTop: 10,
     fontSize: 32,
     color: 'black',
     textAlign: 'center'
@@ -107,6 +125,7 @@ const styles = StyleSheet.create({
   botaoPesquisar: {
     paddingHorizontal: 15,
     paddingVertical: 5,
+    marginTop: 5,
     height: 30,
     backgroundColor: 'lightgray',
     alignSelf: 'center',
@@ -115,12 +134,25 @@ const styles = StyleSheet.create({
   inputCidade: {
     width: '90%',
     height: 30,
-    //backgroundColor: 'gold',
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
     alignSelf: 'center',
-    textAlign: 'center'
+    //textAlign: 'end'
   },
-  card: {
-    backgroundColor: 'lime',
+  cardInfos: {
+    //backgroundColor: 'lime',
     alignItems: 'center'
+  },
+  temperaturas: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    //backgroundColor: 'red',
+    width: '100%'
+  },
+  maxmin: {
+    flexDirection: 'column',
+    //backgroundColor: 'yellow',
+    textAlign: 'center',
+    padding: 5
   }
 });

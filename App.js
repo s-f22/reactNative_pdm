@@ -1,4 +1,4 @@
-import { StyleSheet,StatusBar } from 'react-native';
+import { StyleSheet, StatusBar, View } from 'react-native';
 import ListaFlat from './components/ListaFlat';
 import { React, useState } from 'react';
 import { Tab, Text, TabView } from '@rneui/themed';
@@ -8,28 +8,29 @@ export default function App() {
   const [index, setIndex] = useState(0);
 
   return (
-    <>
-    <StatusBar/>
+    <View style={styles.container}>
+      <StatusBar />
       <Tab
         value={index}
         onChange={(e) => setIndex(e)}
         indicatorStyle={{
-          backgroundColor: 'white',
-          height: 3,
+          backgroundColor: 'cyan',
+          height: 5,
         }}
         variant="primary"
       >
         <Tab.Item
-          title="Recent"
+          title="Pesquisar"
           titleStyle={{ fontSize: 12 }}
-          icon={{ name: 'timer', type: 'ionicon', color: 'white' }}
+          icon={{ name: 'search', type: 'ionicon', color: 'white' }}
         />
         <Tab.Item
-          title="favorite"
+          title="Histórico"
           titleStyle={{ fontSize: 12 }}
-          icon={{ name: 'heart', type: 'ionicon', color: 'white' }}
+          icon={{ name: 'timer', type: 'ionicon', color: 'white' }}
+          
         />
-        
+
       </Tab>
 
       <TabView value={index} onChange={setIndex} animationType="spring">
@@ -37,19 +38,25 @@ export default function App() {
           <ListaFlat />
         </TabView.Item>
         <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-          <Text style={{fontSize: 32}} >Favorite</Text>
+          <Text style={{ fontSize: 32 }} >Favorite</Text>
         </TabView.Item>
-        
+
       </TabView>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    //flex: 1,
+    width: '100%',
+    height: '87%',
+    backgroundColor: '#000',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
+  previsoes: {
+    //flex: 1,
+    backgroundColor: 'blue'
+  }
 });
