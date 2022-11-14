@@ -1,7 +1,7 @@
 import { React, useState } from 'react'
 import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
 import axios from 'axios';
-import { ListItem, Avatar, Icon } from '@rneui/themed'
+import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
 
@@ -33,40 +33,19 @@ export default function ListaFlat() {
       "cidade": response.city.name,
       "data_previsao": moment(new Date())
     }
-    try{
-    const resposta = await axios.post(
-      oracleUrl, obj 
-    )
-    if (resposta.status === 201) {
-      console.log("Previsao cadastrada no DB");
-    }else{
-      console("Erro ao cadastrar no DB")
+    try {
+      const resposta = await axios.post(
+        oracleUrl, obj
+      )
+      if (resposta.status === 201) {
+        console.log("Previsao cadastrada no DB");
+      } else {
+        console("Erro ao cadastrar no DB")
+      }
+    } catch (error) {
+      console.log(error)
     }
-  }catch(error){
-    console.log(error)
   }
-  }
-
-  /*
-  const Item = ({ data, temp_max, temp_min }) => (
-    <View style={styles.item}>
-      <Text style={styles.infos}>{data}</Text>
-      <Text style={styles.infos}>Max: {temp_max} ºC</Text>
-      <Text style={styles.infos}>Min: {temp_min} ºC</Text>
-    </View>
-  );
-
-
-  const renderItem = ({ item }) => (
-    <Item
-      //data={timeConverter(item.dt)}
-      data={item.dt_txt}
-      temp_max={item.main.temp_max}
-      temp_min={item.main.temp_min}
-    />
-  );
-*/
-
 
 
   const renderItem = ({ item }) => (
@@ -75,18 +54,18 @@ export default function ListaFlat() {
         name={verificarIcone(item.weather[0].main)}
         type='feather'
         color='#517fa4'
-        style={{marginStart: '10%'}}
+        style={{ marginStart: '10%' }}
       />
       <ListItem.Content style={styles.cardInfos}>
         <ListItem.Title>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
         <View style={styles.temperaturas}>
           <View style={styles.maxmin}>
-            <Text style={{textAlign: 'center'}}>Temp. Max: </Text>
-            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_max} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center' }}>Temp. Max: </Text>
+            <ListItem.Subtitle style={{ textAlign: 'center' }}>{item.main.temp_max} °C</ListItem.Subtitle>
           </View>
           <View style={styles.maxmin}>
-            <Text style={{textAlign: 'center'}}>Temp. Min: </Text>
-            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_min} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center' }}>Temp. Min: </Text>
+            <ListItem.Subtitle style={{ textAlign: 'center' }}>{item.main.temp_min} °C</ListItem.Subtitle>
           </View>
         </View>
       </ListItem.Content>
@@ -98,7 +77,7 @@ export default function ListaFlat() {
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder='Digite a cidade'
+        placeholder='Insira o nome da cidade'
         value={cidade}
         onChangeText={text => setCidade(text)}
         style={styles.inputCidade}
@@ -116,9 +95,7 @@ export default function ListaFlat() {
       >
         <Text style={{ textAlign: 'center' }} >Cadastrar</Text>
       </TouchableOpacity>
-      {
-        Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>
-      }
+      {Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>}
       <FlatList
         data={response.list}
         renderItem={renderItem}
@@ -136,7 +113,6 @@ const styles = StyleSheet.create({
     //   //height: '100%',
     //   alignItems: 'center',
     //   backgroundColor: 'steelblue',
-
   },
   infos: {
     fontSize: 26,

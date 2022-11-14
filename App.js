@@ -1,7 +1,8 @@
 import { StyleSheet, StatusBar, View } from 'react-native';
-import ListaFlat from './components/ListaFlat';
+import Previsoes from './components/Previsoes';
+import Historico from './components/Historico';
 import { React, useState } from 'react';
-import { Tab, Text, TabView } from '@rneui/themed';
+import { Tab, TabView } from '@rneui/themed';
 
 export default function App() {
 
@@ -14,33 +15,29 @@ export default function App() {
         value={index}
         onChange={(e) => setIndex(e)}
         indicatorStyle={{
-          backgroundColor: 'cyan',
+          backgroundColor: 'white',
           height: 5,
         }}
         variant="primary"
       >
         <Tab.Item
-          title="Pesquisar"
+          title="Previsões"
           titleStyle={{ fontSize: 12 }}
           icon={{ name: 'search', type: 'ionicon', color: 'white' }}
         />
         <Tab.Item
           title="Histórico"
           titleStyle={{ fontSize: 12 }}
-          icon={{ name: 'timer', type: 'ionicon', color: 'white' }}
-          
+          icon={{ name: 'timer', type: 'ionicon', color: 'white' }}          
         />
-
       </Tab>
-
       <TabView value={index} onChange={setIndex} animationType="spring">
         <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-          <ListaFlat />
-        </TabView.Item>
+          <Previsoes />
+        </TabView.Item>      
         <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-          <Text style={{ fontSize: 32 }} >Favorite</Text>
+          <Historico />
         </TabView.Item>
-
       </TabView>
     </View>
   );
