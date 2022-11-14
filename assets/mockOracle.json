@@ -1,0 +1,37 @@
+{
+  "items": [
+      {
+          "cod_previsao": 1,
+          "cidade": "Itu",
+          "data_previsao": "2022-11-13T23:44:45.809Z",
+          "links": [
+              {
+                  "rel": "self",
+                  "href": "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/1"
+              }
+          ]
+      }
+  ],
+  "hasMore": false,
+  "limit": 25,
+  "offset": 0,
+  "count": 1,
+  "links": [
+      {
+          "rel": "self",
+          "href": "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/"
+      },
+      {
+          "rel": "edit",
+          "href": "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/"
+      },
+      {
+          "rel": "describedby",
+          "href": "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/metadata-catalog/historico_previsoes/"
+      },
+      {
+          "rel": "first",
+          "href": "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/"
+      }
+  ]
+}

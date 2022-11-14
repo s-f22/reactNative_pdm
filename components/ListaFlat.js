@@ -6,7 +6,6 @@ import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
 
 
-
 export default function ListaFlat() {
 
   const mockData = require('../assets/mock.json')
@@ -17,6 +16,7 @@ export default function ListaFlat() {
   const [cidade, setCidade] = useState('');
 
   const requestUrl = `https://${baseUrl}?q=${cidade}&cnt&units=metric&lang=pt_br&appid=${apiKey}`;
+  const oracleUrl = 'https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/'
 
   moment.locale('pt-br');
 
@@ -25,7 +25,27 @@ export default function ListaFlat() {
     const { data } = await axios.get(requestUrl);
     console.log('Response: ', data)
     setResponse(data);
+    setCidade('');
   };
+
+  const postPrevisao = async () => {
+    const obj = {
+      "cidade": response.city.name,
+      "data_previsao": moment(new Date())
+    }
+    try{
+    const resposta = await axios.post(
+      oracleUrl, obj 
+    )
+    if (resposta.status === 201) {
+      console.log("Previsao cadastrada no DB");
+    }else{
+      console("Erro ao cadastrar no DB")
+    }
+  }catch(error){
+    console.log(error)
+  }
+  }
 
   /*
   const Item = ({ data, temp_max, temp_min }) => (
@@ -89,6 +109,12 @@ export default function ListaFlat() {
         style={styles.botaoPesquisar}
       >
         <Text style={{ textAlign: 'center' }} >Pesquisar</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => postPrevisao()}
+        style={styles.botaoPesquisar}
+      >
+        <Text style={{ textAlign: 'center' }} >Cadastrar</Text>
       </TouchableOpacity>
       {
         Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>
