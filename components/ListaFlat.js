@@ -1,79 +1,124 @@
-import React from 'react';
-import { Button, View, FlatList, StyleSheet, Text, TextInput } from 'react-native';
-import { useState } from 'react'
+import { React, useState } from 'react'
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
 import axios from 'axios';
-
+import { ListItem, Avatar, Icon } from '@rneui/themed'
+import moment from 'moment/min/moment-with-locales';
+import { verificarIcone } from '../functions/verificarIcones';
 
 
 export default function ListaFlat() {
 
-  const api = require('../assets/mock.json')
-  const key = 'cd6a6dcf37771d34beb24817c6c3fd40'
-  const [response, setResponse] = useState(api);
+  const mockData = require('../assets/mock.json')
+  const baseUrl = "api.openweathermap.org/data/2.5/forecast"
+  const apiKey = "cd6a6dcf37771d34beb24817c6c3fd40";
+
+  const [response, setResponse] = useState({});
   const [cidade, setCidade] = useState('');
 
-  const getCidade = async () => {
-    console.log(`http://api.openweathermap.org/geo/1.0/direct?q=${cidade}&appid=${key}`)
-    await axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${cidade}&appid=${key}`)
-      .then(response => {
-        console.log(response)
-        getPrevisao(response.data[0].lat, response.data[0].lon)
-      })
-      .catch(response => {
-        alert('Digite uma cidade válida!')
-        console.log('Erro')
-      })
-  };
+  const requestUrl = `https://${baseUrl}?q=${cidade}&cnt&units=metric&lang=pt_br&appid=${apiKey}`;
+  const oracleUrl = 'https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/'
 
-  const getPrevisao = async (lat, lon) => {
-    console.log(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${key}`)
-    const {data} = await axios.get(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${key}&units=metric`)
-    console.log(data)
+  moment.locale('pt-br');
+
+  const getPrevisao = async () => {
+    console.log('Request: ', requestUrl);
+    const { data } = await axios.get(requestUrl);
+    console.log('Response: ', data)
     setResponse(data);
+    setCidade('');
   };
 
-  function timeConverter(timestamp) {
-    let a = new Date(timestamp * 1000);
-    let months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    let year = a.getFullYear();
-    let month = months[a.getMonth()];
-    let date = a.getDate();
-    let hour = a.getHours();
-    let min = a.getMinutes();
-    let sec = a.getSeconds();
-    let time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
-    return time;
+  const postPrevisao = async () => {
+    const obj = {
+      "cidade": response.city.name,
+      "data_previsao": moment(new Date())
+    }
+    try{
+    const resposta = await axios.post(
+      oracleUrl, obj 
+    )
+    if (resposta.status === 201) {
+      console.log("Previsao cadastrada no DB");
+    }else{
+      console("Erro ao cadastrar no DB")
+    }
+  }catch(error){
+    console.log(error)
+  }
   }
 
+  /*
   const Item = ({ data, temp_max, temp_min }) => (
     <View style={styles.item}>
       <Text style={styles.infos}>{data}</Text>
-      <Text style={styles.infos}>Max: {temp_max}º</Text>
-      <Text style={styles.infos}>Min: {temp_min}º</Text>
+      <Text style={styles.infos}>Max: {temp_max} ÂºC</Text>
+      <Text style={styles.infos}>Min: {temp_min} ÂºC</Text>
     </View>
   );
 
 
   const renderItem = ({ item }) => (
     <Item
-      data={timeConverter(item.dt)}
+      //data={timeConverter(item.dt)}
+      data={item.dt_txt}
       temp_max={item.main.temp_max}
       temp_min={item.main.temp_min}
     />
   );
+*/
+
+
+
+  const renderItem = ({ item }) => (
+    <ListItem bottomDivider>
+      <Icon
+        name={verificarIcone(item.weather[0].main)}
+        type='feather'
+        color='#517fa4'
+        style={{marginStart: '10%'}}
+      />
+      <ListItem.Content style={styles.cardInfos}>
+        <ListItem.Title>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
+        <View style={styles.temperaturas}>
+          <View style={styles.maxmin}>
+            <Text style={{textAlign: 'center'}}>Temp. Max: </Text>
+            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_max} Â°C</ListItem.Subtitle>
+          </View>
+          <View style={styles.maxmin}>
+            <Text style={{textAlign: 'center'}}>Temp. Min: </Text>
+            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_min} Â°C</ListItem.Subtitle>
+          </View>
+        </View>
+      </ListItem.Content>
+      <ListItem.Chevron />
+    </ListItem>
+  )
+
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         placeholder='Digite a cidade'
         value={cidade}
         onChangeText={text => setCidade(text)}
+        style={styles.inputCidade}
       />
-      <Button
-        title='Pesquisar'
-        onPress={getCidade}
-      />
-      <Text style={styles.local}>{response.city.name}</Text>
+      {/* <Button title="Toggle Toast" onPress={() => showToast()} /> */}
+      <TouchableOpacity
+        onPress={() => getPrevisao()}
+        style={styles.botaoPesquisar}
+      >
+        <Text style={{ textAlign: 'center' }} >Pesquisar</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => postPrevisao()}
+        style={styles.botaoPesquisar}
+      >
+        <Text style={{ textAlign: 'center' }} >Cadastrar</Text>
+      </TouchableOpacity>
+      {
+        Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>
+      }
       <FlatList
         data={response.list}
         renderItem={renderItem}
@@ -85,21 +130,55 @@ export default function ListaFlat() {
 
 const styles = StyleSheet.create({
 
-  item: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#6600cc',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+  container: {
+    //   //flex: 1,
+    //   //width: '100%',
+    //   //height: '100%',
+    //   alignItems: 'center',
+    //   backgroundColor: 'steelblue',
+
   },
   infos: {
     fontSize: 26,
     color: 'white'
   },
   local: {
+    marginTop: 10,
     fontSize: 32,
     color: 'black',
     textAlign: 'center'
+  },
+  botaoPesquisar: {
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    marginTop: 5,
+    height: 30,
+    backgroundColor: 'lightgray',
+    alignSelf: 'center',
+    borderRadius: 15
+  },
+  inputCidade: {
+    width: '90%',
+    height: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+    alignSelf: 'center',
+    //textAlign: 'end'
+  },
+  cardInfos: {
+    //backgroundColor: 'lime',
+    alignItems: 'center'
+  },
+  temperaturas: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    //backgroundColor: 'red',
+    width: '100%'
+  },
+  maxmin: {
+    flexDirection: 'column',
+    //backgroundColor: 'yellow',
+    textAlign: 'center',
+    padding: 5
   }
 });
