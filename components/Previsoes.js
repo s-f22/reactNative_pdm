@@ -21,12 +21,16 @@ export default function ListaFlat() {
   moment.locale('pt-br');
 
   const getPrevisao = async () => {
-    console.log('Request: ', requestUrl);
-    const { data } = await axios.get(requestUrl);
-    console.log('Response: ', data)
-    setResponse(data);
-    setCidade('');
+    axios(requestUrl)
+      .then(resposta => {
+        if (resposta.status === 200) {
+          setResponse(resposta.data)
+        }
+      })
+      .then(setCidade(''))
+      .catch(erro => console.log(erro));
   };
+
 
   const postPrevisao = async () => {
     const obj = {
@@ -93,7 +97,7 @@ export default function ListaFlat() {
         onPress={() => postPrevisao()}
         style={styles.botaoPesquisar}
       >
-        <Text style={{ textAlign: 'center' }} >Cadastrar</Text>
+        <Text style={{ textAlign: 'center' }} >Cadastrar pesquisa</Text>
       </TouchableOpacity>
       {Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>}
       <FlatList

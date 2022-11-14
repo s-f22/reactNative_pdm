@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { React, useState, useEffect } from 'react'
 import { View, FlatList, StyleSheet, Text, TouchableOpacity, Button, TextInput } from 'react-native';
 import axios from 'axios';
 import { ListItem, Icon } from '@rneui/themed'
@@ -12,29 +12,29 @@ export default function ListaFlat() {
   const baseUrl = "api.openweathermap.org/data/2.5/forecast"
   const apiKey = "cd6a6dcf37771d34beb24817c6c3fd40";
 
-  const [response, setResponse] = useState({});
+  const [resposta, setResposta] = useState({});
 
   const oracleUrl = "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/"
 
   moment.locale('pt-br');
 
   const getHistorico = async () => {
-    const data = await axios.get("https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/", {
-      headers: {
-        
-      },
-    });
-    console.log('\n\n\nResponse: ', data)
-    //setResponse(data);
+    axios(oracleUrl)
+      .then(response => {
+        if (response.status === 200) {
+          setResposta(response.data)
+        }
+      })
+      .then(console.log(resposta.items))
+      .catch(erro => console.log(erro));
   };
-
-
 
 
   const Item = ({ cidade, data_previsao }) => (
     <View style={styles.item}>
-      <Text style={styles.infos}>Cidade: {cidade}</Text>
-      <Text style={styles.infos}>Data da consulta: {moment(data_previsao).locale('pt-br').format('LLL')}</Text>
+      <Text style={styles.city}>Cidade: {cidade}</Text>
+      <Text style={styles.infos}>Data da consulta:</Text>
+      <Text style={styles.infos}>{moment(data_previsao).locale('pt-br').format('LLL')}</Text>
     </View>
   );
 
@@ -47,18 +47,21 @@ export default function ListaFlat() {
   );
 
 
+  useEffect(() => {
+    getHistorico()
+    return (
+      setResposta({})
+    )
+  }, []);
+
+
   return (
     <View>
-      
-      <Button
-        title='Pesquisar'
-        onPress={() => getHistorico()}
-      />
-      <Text style={styles.local}>Suas pesquisas recentes:</Text>
+      <Text style={styles.titulo}>Suas pesquisas recentes:</Text>
       <FlatList
-        data={response.items}
+        data={resposta.items}
         renderItem={renderItem}
-        keyExtractor={item => item.dt}
+        keyExtractor={item => item.cod_previsao}
       />
     </View>
   );
@@ -70,16 +73,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#6600cc',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    padding: 10,
+    marginVertical: 5,
+    marginHorizontal: '5%',
+    borderRadius: 5
   },
   infos: {
-    fontSize: 26,
-    color: 'white'
+    fontSize: 14,
+    color: 'white',
   },
-  local: {
-    fontSize: 32,
+  city: {
+    fontSize: 20,
+    color: 'white',
+    marginBottom: 5
+  },
+  titulo: {
+    fontSize: 26,
     color: 'black',
     textAlign: 'center'
   }
