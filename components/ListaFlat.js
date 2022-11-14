@@ -51,8 +51,8 @@ export default function ListaFlat() {
   const Item = ({ data, temp_max, temp_min }) => (
     <View style={styles.item}>
       <Text style={styles.infos}>{data}</Text>
-      <Text style={styles.infos}>Max: {temp_max} ÂºC</Text>
-      <Text style={styles.infos}>Min: {temp_min} ÂºC</Text>
+      <Text style={styles.infos}>Max: {temp_max} ºC</Text>
+      <Text style={styles.infos}>Min: {temp_min} ºC</Text>
     </View>
   );
 
@@ -82,11 +82,11 @@ export default function ListaFlat() {
         <View style={styles.temperaturas}>
           <View style={styles.maxmin}>
             <Text style={{textAlign: 'center'}}>Temp. Max: </Text>
-            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_max} Â°C</ListItem.Subtitle>
+            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_max} °C</ListItem.Subtitle>
           </View>
           <View style={styles.maxmin}>
             <Text style={{textAlign: 'center'}}>Temp. Min: </Text>
-            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_min} Â°C</ListItem.Subtitle>
+            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_min} °C</ListItem.Subtitle>
           </View>
         </View>
       </ListItem.Content>
