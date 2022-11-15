@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
+import { color } from '@rneui/themed/dist/config';
 
 
 export default function Previsoes(props) {
@@ -70,15 +71,15 @@ export default function Previsoes(props) {
         style={{ marginStart: '10%' }}
       />
       <ListItem.Content style={styles.cardInfos}>
-        <ListItem.Title>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
+        <ListItem.Title style={{color: '#767676'}}>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
         <View style={styles.temperaturas}>
           <View style={styles.maxmin}>
-            <Text style={{ textAlign: 'center' }}>Temp. Max: </Text>
-            <ListItem.Subtitle style={{ textAlign: 'center' }}>{item.main.temp_max} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center', color: '#FF3F00' }}>Temp. Max: </Text>
+            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676' }}>{item.main.temp_max} °C</ListItem.Subtitle>
           </View>
           <View style={styles.maxmin}>
-            <Text style={{ textAlign: 'center' }}>Temp. Min: </Text>
-            <ListItem.Subtitle style={{ textAlign: 'center' }}>{item.main.temp_min} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center', color: '#7393B3' }}>Temp. Min: </Text>
+            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676' }}>{item.main.temp_min} °C</ListItem.Subtitle>
           </View>
         </View>
       </ListItem.Content>
@@ -100,7 +101,7 @@ export default function Previsoes(props) {
         onPress={() => getPrevisao()}
         style={styles.botaoPesquisar}
       >
-        <Text style={{ textAlign: 'center' }} >Pesquisar</Text>
+        <Text style={{ textAlign: 'center', color: 'white' }} >Pesquisar</Text>
       </TouchableOpacity>
       {/* <TouchableOpacity
         onPress={() => postPrevisao()}
@@ -127,14 +128,10 @@ const styles = StyleSheet.create({
     //   alignItems: 'center',
     //   backgroundColor: 'steelblue',
   },
-  infos: {
-    fontSize: 26,
-    color: 'white'
-  },
   local: {
     marginTop: 10,
     fontSize: 32,
-    color: 'black',
+    color: '#1434A4',
     textAlign: 'center'
   },
   botaoPesquisar: {
@@ -142,9 +139,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginTop: 5,
     height: 30,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#89CFF0',
     alignSelf: 'center',
-    borderRadius: 15
+    borderRadius: 15,
   },
   inputCidade: {
     width: '90%',
@@ -162,7 +159,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     //backgroundColor: 'red',
-    width: '100%'
+    width: '100%',
   },
   maxmin: {
     flexDirection: 'column',

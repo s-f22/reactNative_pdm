@@ -33,7 +33,7 @@ export default function Historico(props) {
 
 
   const renderItem = ({ item }) => (
-    <Item
+    <Item 
       cidade={item.cidade}
       data_previsao={item.data_previsao}
     />
@@ -58,6 +58,12 @@ export default function Historico(props) {
         data={resposta.items}
         renderItem={renderItem}
         keyExtractor={item => item.cod_previsao}
+        style={styles.container}
+        //horizontal={true}
+        numColumns={2}
+        columnWrapperStyle={true}
+        centerContent={true}
+        
       />
     </View>
   );
@@ -65,27 +71,39 @@ export default function Historico(props) {
 
 const styles = StyleSheet.create({
 
+  container: {
+    //backgroundColor: 'blue',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+
+    //justifyContent: 'center'
+  },
   item: {
-    flex: 1,
+    //backgroundColor: 'gray',
+    marginHorizontal: '2.5%',
+    width: '45%',
     alignItems: 'center',
-    backgroundColor: '#6600cc',
+    justifyContent: 'center',
     padding: 10,
-    marginVertical: 5,
-    marginHorizontal: '5%',
+    marginTop: '1%',
+    marginBottom: '1%',
     borderRadius: 5
   },
   infos: {
     fontSize: 14,
-    color: 'white',
+    color: '#7393B3',
+    textAlign: 'center'
   },
   city: {
     fontSize: 20,
-    color: 'white',
-    marginBottom: 5
+    color: '#1434A4',
+    marginBottom: 5,
+    textAlign: 'center'
   },
   titulo: {
     fontSize: 26,
-    color: 'black',
+    color: '#767676',
     textAlign: 'center'
   }
 });
