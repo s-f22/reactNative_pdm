@@ -7,6 +7,7 @@ import { Tab, TabView } from '@rneui/themed';
 export default function App() {
 
   const [index, setIndex] = useState(0);
+  const [cidadeEscolhida, setCidadeEscolhida] = useState('');
 
   return (
     <View style={styles.container}>
@@ -33,10 +34,10 @@ export default function App() {
       </Tab>
       <TabView value={index} onChange={setIndex} animationType="spring">
         <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-          <Previsoes />
+          <Previsoes definirCidade={setCidadeEscolhida}/>
         </TabView.Item>      
         <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-          <Historico />
+          <Historico cidadeAtual={cidadeEscolhida}/>
         </TabView.Item>
       </TabView>
     </View>

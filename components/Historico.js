@@ -6,7 +6,7 @@ import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
 
 
-export default function ListaFlat() {
+export default function Historico(props) {
 
   const mockData = require('../assets/mock.json')
   const baseUrl = "api.openweathermap.org/data/2.5/forecast"
@@ -32,7 +32,7 @@ export default function ListaFlat() {
 
   const Item = ({ cidade, data_previsao }) => (
     <View style={styles.item}>
-      <Text style={styles.city}>Cidade: {cidade}</Text>
+      <Text style={styles.city}>{cidade}</Text>
       <Text style={styles.infos}>Data da consulta:</Text>
       <Text style={styles.infos}>{moment(data_previsao).locale('pt-br').format('LLL')}</Text>
     </View>
@@ -48,11 +48,14 @@ export default function ListaFlat() {
 
 
   useEffect(() => {
-    getHistorico()
+    setTimeout(() => {
+      getHistorico()
+    }, 2000);
+    //console.log("A CIDADE no historico É: ", props.cidadeAtual)
     return (
       setResposta({})
     )
-  }, []);
+  }, [props.cidadeAtual]);
 
 
   return (

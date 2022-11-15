@@ -1,12 +1,12 @@
 import { React, useState } from 'react'
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import axios from 'axios';
 import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
 
 
-export default function ListaFlat() {
+export default function Previsoes(props) {
 
   const mockData = require('../assets/mock.json')
   const baseUrl = "api.openweathermap.org/data/2.5/forecast"
@@ -27,14 +27,18 @@ export default function ListaFlat() {
           setResponse(resposta.data)
         }
       })
+      .then(postPrevisao())
+      .then(props.definirCidade(cidade))
       .then(setCidade(''))
+      .then(showToast())
       .catch(erro => console.log(erro));
   };
 
 
   const postPrevisao = async () => {
     const obj = {
-      "cidade": response.city.name,
+      //"cidade": response.city.name,
+      "cidade": cidade,
       "data_previsao": moment(new Date())
     }
     try {
@@ -51,6 +55,11 @@ export default function ListaFlat() {
     }
   }
 
+  const showToast = () => {
+    ToastAndroid.show("Consulta cadastrada no histórico.", ToastAndroid.SHORT);
+  };
+
+  
 
   const renderItem = ({ item }) => (
     <ListItem bottomDivider>
@@ -93,12 +102,12 @@ export default function ListaFlat() {
       >
         <Text style={{ textAlign: 'center' }} >Pesquisar</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => postPrevisao()}
         style={styles.botaoPesquisar}
       >
         <Text style={{ textAlign: 'center' }} >Cadastrar pesquisa</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>}
       <FlatList
         data={response.list}
