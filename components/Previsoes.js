@@ -56,10 +56,10 @@ export default function Previsoes(props) {
   }
 
   const showToast = () => {
-    ToastAndroid.show("Consulta cadastrada no histórico.", ToastAndroid.SHORT);
+    ToastAndroid.show("Consulta cadastrada no histórico.", ToastAndroid.LONG);
   };
 
-  
+
 
   const renderItem = ({ item }) => (
     <ListItem bottomDivider>

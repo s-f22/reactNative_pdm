@@ -1,16 +1,9 @@
 import { React, useState, useEffect } from 'react'
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Button, TextInput } from 'react-native';
+import { View, FlatList, StyleSheet, Text } from 'react-native';
 import axios from 'axios';
-import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
-import { verificarIcone } from '../functions/verificarIcones';
-
 
 export default function Historico(props) {
-
-  const mockData = require('../assets/mock.json')
-  const baseUrl = "api.openweathermap.org/data/2.5/forecast"
-  const apiKey = "cd6a6dcf37771d34beb24817c6c3fd40";
 
   const [resposta, setResposta] = useState({});
 
@@ -25,7 +18,7 @@ export default function Historico(props) {
           setResposta(response.data)
         }
       })
-      .then(console.log(resposta.items))
+      //.then(console.log(resposta.items))
       .catch(erro => console.log(erro));
   };
 
