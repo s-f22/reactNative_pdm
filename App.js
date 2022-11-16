@@ -1,11 +1,13 @@
 import { StyleSheet, StatusBar, View } from 'react-native';
-import ListaFlat from './components/ListaFlat';
+import Previsoes from './components/Previsoes';
+import Historico from './components/Historico';
 import { React, useState } from 'react';
-import { Tab, Text, TabView } from '@rneui/themed';
+import { Tab, TabView } from '@rneui/themed';
 
 export default function App() {
 
   const [index, setIndex] = useState(0);
+  const [cidadeEscolhida, setCidadeEscolhida] = useState('');
 
   return (
     <View style={styles.container}>
@@ -14,33 +16,29 @@ export default function App() {
         value={index}
         onChange={(e) => setIndex(e)}
         indicatorStyle={{
-          backgroundColor: 'cyan',
+          backgroundColor: 'white',
           height: 5,
         }}
         variant="primary"
       >
         <Tab.Item
-          title="Pesquisar"
+          title="Previsões"
           titleStyle={{ fontSize: 12 }}
           icon={{ name: 'search', type: 'ionicon', color: 'white' }}
         />
         <Tab.Item
           title="Histórico"
           titleStyle={{ fontSize: 12 }}
-          icon={{ name: 'timer', type: 'ionicon', color: 'white' }}
-          
+          icon={{ name: 'timer', type: 'ionicon', color: 'white' }}          
         />
-
       </Tab>
-
       <TabView value={index} onChange={setIndex} animationType="spring">
         <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-          <ListaFlat />
-        </TabView.Item>
+          <Previsoes definirCidade={setCidadeEscolhida}/>
+        </TabView.Item>      
         <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-          <Text style={{ fontSize: 32 }} >Favorite</Text>
+          <Historico cidadeAtual={cidadeEscolhida}/>
         </TabView.Item>
-
       </TabView>
     </View>
   );

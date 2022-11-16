@@ -1,12 +1,13 @@
 import { React, useState } from 'react'
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import axios from 'axios';
-import { ListItem, Avatar, Icon } from '@rneui/themed'
+import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
+import { color } from '@rneui/themed/dist/config';
 
 
-export default function ListaFlat() {
+export default function Previsoes(props) {
 
   const mockData = require('../assets/mock.json')
   const baseUrl = "api.openweathermap.org/data/2.5/forecast"
@@ -21,51 +22,43 @@ export default function ListaFlat() {
   moment.locale('pt-br');
 
   const getPrevisao = async () => {
-    console.log('Request: ', requestUrl);
-    const { data } = await axios.get(requestUrl);
-    console.log('Response: ', data)
-    setResponse(data);
-    setCidade('');
+    axios(requestUrl)
+      .then(resposta => {
+        if (resposta.status === 200) {
+          setResponse(resposta.data)
+        }
+      })
+      .then(postPrevisao())
+      .then(props.definirCidade(cidade))
+      .then(setCidade(''))
+      .then(showToast())
+      .catch(erro => console.log(erro));
   };
+
 
   const postPrevisao = async () => {
     const obj = {
-      "cidade": response.city.name,
+      //"cidade": response.city.name,
+      "cidade": cidade,
       "data_previsao": moment(new Date())
     }
-    try{
-    const resposta = await axios.post(
-      oracleUrl, obj 
-    )
-    if (resposta.status === 201) {
-      console.log("Previsao cadastrada no DB");
-    }else{
-      console("Erro ao cadastrar no DB")
+    try {
+      const resposta = await axios.post(
+        oracleUrl, obj
+      )
+      if (resposta.status === 201) {
+        console.log("Previsao cadastrada no DB");
+      } else {
+        console("Erro ao cadastrar no DB")
+      }
+    } catch (error) {
+      console.log(error)
     }
-  }catch(error){
-    console.log(error)
-  }
   }
 
-  /*
-  const Item = ({ data, temp_max, temp_min }) => (
-    <View style={styles.item}>
-      <Text style={styles.infos}>{data}</Text>
-      <Text style={styles.infos}>Max: {temp_max} ºC</Text>
-      <Text style={styles.infos}>Min: {temp_min} ºC</Text>
-    </View>
-  );
-
-
-  const renderItem = ({ item }) => (
-    <Item
-      //data={timeConverter(item.dt)}
-      data={item.dt_txt}
-      temp_max={item.main.temp_max}
-      temp_min={item.main.temp_min}
-    />
-  );
-*/
+  const showToast = () => {
+    ToastAndroid.show("Consulta cadastrada no histórico.", ToastAndroid.LONG);
+  };
 
 
 
@@ -75,18 +68,18 @@ export default function ListaFlat() {
         name={verificarIcone(item.weather[0].main)}
         type='feather'
         color='#517fa4'
-        style={{marginStart: '10%'}}
+        style={{ marginStart: '10%' }}
       />
       <ListItem.Content style={styles.cardInfos}>
-        <ListItem.Title>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
+        <ListItem.Title style={{color: '#767676'}}>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
         <View style={styles.temperaturas}>
           <View style={styles.maxmin}>
-            <Text style={{textAlign: 'center'}}>Temp. Max: </Text>
-            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_max} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center', color: '#FF3F00' }}>Temp. Max: </Text>
+            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676' }}>{item.main.temp_max} °C</ListItem.Subtitle>
           </View>
           <View style={styles.maxmin}>
-            <Text style={{textAlign: 'center'}}>Temp. Min: </Text>
-            <ListItem.Subtitle style={{textAlign: 'center'}}>{item.main.temp_min} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center', color: '#7393B3' }}>Temp. Min: </Text>
+            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676' }}>{item.main.temp_min} °C</ListItem.Subtitle>
           </View>
         </View>
       </ListItem.Content>
@@ -98,7 +91,7 @@ export default function ListaFlat() {
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder='Digite a cidade'
+        placeholder='Insira o nome da cidade'
         value={cidade}
         onChangeText={text => setCidade(text)}
         style={styles.inputCidade}
@@ -108,17 +101,15 @@ export default function ListaFlat() {
         onPress={() => getPrevisao()}
         style={styles.botaoPesquisar}
       >
-        <Text style={{ textAlign: 'center' }} >Pesquisar</Text>
+        <Text style={{ textAlign: 'center', color: 'white' }} >Pesquisar</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => postPrevisao()}
         style={styles.botaoPesquisar}
       >
-        <Text style={{ textAlign: 'center' }} >Cadastrar</Text>
-      </TouchableOpacity>
-      {
-        Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>
-      }
+        <Text style={{ textAlign: 'center' }} >Cadastrar pesquisa</Text>
+      </TouchableOpacity> */}
+      {Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>}
       <FlatList
         data={response.list}
         renderItem={renderItem}
@@ -136,16 +127,11 @@ const styles = StyleSheet.create({
     //   //height: '100%',
     //   alignItems: 'center',
     //   backgroundColor: 'steelblue',
-
-  },
-  infos: {
-    fontSize: 26,
-    color: 'white'
   },
   local: {
     marginTop: 10,
     fontSize: 32,
-    color: 'black',
+    color: '#1434A4',
     textAlign: 'center'
   },
   botaoPesquisar: {
@@ -153,9 +139,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginTop: 5,
     height: 30,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#89CFF0',
     alignSelf: 'center',
-    borderRadius: 15
+    borderRadius: 15,
   },
   inputCidade: {
     width: '90%',
@@ -173,7 +159,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     //backgroundColor: 'red',
-    width: '100%'
+    width: '100%',
   },
   maxmin: {
     flexDirection: 'column',
