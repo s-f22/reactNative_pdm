@@ -1,7 +1,8 @@
 import { React, useState, useEffect } from 'react'
-import { View, FlatList, StyleSheet, Text } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, ToastAndroid } from 'react-native';
 import axios from 'axios';
 import moment from 'moment/min/moment-with-locales';
+import { Icon } from '@rneui/themed'
 
 export default function Historico(props) {
 
@@ -22,14 +23,32 @@ export default function Historico(props) {
       .catch(erro => console.log(erro));
   };
 
+  const deleteItemOracle = async (cod_previsao) => {
+    axios.delete(oracleUrl + `/${cod_previsao}`)
+      .then(showToast())
+      .then(getHistorico())
+  }
 
-  const Item = ({ cidade, data_previsao }) => (
+  const showToast = () => {
+    ToastAndroid.show("Item removido do histórico.", ToastAndroid.LONG);
+  };
+
+
+  const Item = ({ cidade, data_previsao, cod_previsao }) => (
     <View style={styles.item}>
+
       <Text style={styles.city}>{cidade}</Text>
       <View style={styles.dadosDataConsulta}>
         <Text style={styles.infosData}>Data da consulta:</Text>
         <Text style={styles.infos}>{moment(data_previsao).locale('pt-br').format('LLL')}</Text>
       </View>
+      <TouchableOpacity onPress={() => deleteItemOracle(cod_previsao)} style={styles.btnExcluir}>
+        <Icon
+          name='trash'
+          type='font-awesome'
+          color='#517fa4'
+        />
+      </TouchableOpacity>
     </View>
   );
 
@@ -38,6 +57,7 @@ export default function Historico(props) {
     <Item
       cidade={item.cidade}
       data_previsao={item.data_previsao}
+      cod_previsao={item.cod_previsao}
     />
   );
 
@@ -86,24 +106,25 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     backgroundColor: '#ECECEC',
-    marginHorizontal: '2.5%',
+    marginHorizontal: '2%',
     width: '93%',
     justifyContent: 'space-around',
-    padding: 10,
+    padding: 5,
     marginTop: '1%',
-    marginBottom: '3%',
-    borderRadius: 5, 
+    marginBottom: '.5%',
+    borderRadius: 5,
     alignSelf: 'center',
     alignItems: 'center',
-    
-    shadowColor: 'gray', shadowOpacity: .1, 
-    shadowOffset: {width: 5, height: 5}
+
+    shadowColor: 'gray', shadowOpacity: .1,
+    shadowOffset: { width: 5, height: 5 }
     //alignContent: 'center',
     //alignSelf: 'center',
   },
   dadosDataConsulta: {
-    width: '40%',
-    //backgroundColor: 'red'
+    width: '35%',
+    //marginRight: '5%',
+    //backgroundColor: 'red',
   },
   infos: {
     fontSize: 14,
@@ -127,7 +148,8 @@ const styles = StyleSheet.create({
     color: '#1434A4',
     marginBottom: 5,
     textAlign: 'center',
-    width: '60%',
+    width: '50%',
+    //marginHorizontal: '10%'
     //backgroundColor: 'yellow'
   },
   titulo: {
@@ -135,5 +157,10 @@ const styles = StyleSheet.create({
     color: '#767676',
     textAlign: 'center',
     marginBottom: '2%',
+  },
+  btnExcluir: {
+    padding: 7,
+    marginLeft: 5,
+    //backgroundColor: 'yellow',
   }
 });
