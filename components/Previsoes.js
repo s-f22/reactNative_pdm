@@ -70,12 +70,12 @@ export default function Previsoes(props) {
       borderRadius: 5, shadowColor: 'gray', shadowOpacity: .1,
       shadowOffset: { width: 5, height: 5 }
     }}>
-      <Icon
+      {/* <Icon
         name={verificarIcone(item.weather[0].main)}
         type='feather'
         color='#517fa4'
         style={{ marginStart: '10%' }}
-      />
+      /> */}
       <Image style={{
         width: 100,
         height: 60,

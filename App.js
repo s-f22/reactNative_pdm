@@ -16,7 +16,7 @@ export default function App() {
         value={index}
         onChange={(e) => setIndex(e)}
         indicatorStyle={{
-          backgroundColor: 'white',
+          backgroundColor: 'cyan',
           height: 5,
         }}
         variant="primary"

@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react'
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, ToastAndroid } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, ToastAndroid, Alert, Modal, Pressable } from 'react-native';
 import axios from 'axios';
 import moment from 'moment/min/moment-with-locales';
 import { Icon } from '@rneui/themed'
@@ -7,6 +7,8 @@ import { Icon } from '@rneui/themed'
 export default function Historico(props) {
 
   const [resposta, setResposta] = useState({});
+  const [idItemOracle, serIdItemOracle] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const oracleUrl = "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/"
 
@@ -25,16 +27,39 @@ export default function Historico(props) {
 
   const deleteItemOracle = async (cod_previsao) => {
     axios.delete(oracleUrl + `/${cod_previsao}`)
-      .then(showToast())
-      .then(getHistorico())
+      .then(response => {
+        if (response.status === 200 || response.status === 204) {
+
+          setModalVisible(false);
+          setTimeout(() => {
+            getHistorico()
+          }, 2000);
+          showToast()
+        }
+      })
+      //.then(console.log(resposta.items))
+      .catch(erro => console.log(erro));
+
   }
 
   const showToast = () => {
     ToastAndroid.show("Item removido do histórico.", ToastAndroid.LONG);
   };
 
+  
+
+  <View style={styles.centeredView}>
+
+  </View>
+
+const acionarExclusao = (idOracle) => {
+  setModalVisible(true);
+  serIdItemOracle(idOracle)
+}
+
 
   const Item = ({ cidade, data_previsao, cod_previsao }) => (
+
     <View style={styles.item}>
 
       <Text style={styles.city}>{cidade}</Text>
@@ -42,7 +67,7 @@ export default function Historico(props) {
         <Text style={styles.infosData}>Data da consulta:</Text>
         <Text style={styles.infos}>{moment(data_previsao).locale('pt-br').format('LLL')}</Text>
       </View>
-      <TouchableOpacity onPress={() => deleteItemOracle(cod_previsao)} style={styles.btnExcluir}>
+      <TouchableOpacity onPress={() => acionarExclusao(cod_previsao)} style={styles.btnExcluir}>
         <Icon
           name='trash'
           type='font-awesome'
@@ -74,7 +99,7 @@ export default function Historico(props) {
 
 
   return (
-    <View style={styles.pgContainer}>
+    <View style={styles.viewCentralizada}>
       <Text style={styles.titulo}>Suas pesquisas recentes:</Text>
       <FlatList
         data={resposta.items}
@@ -86,16 +111,97 @@ export default function Historico(props) {
         //columnWrapperStyle={true}
         centerContent={true}
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Confirmar exclusão:</Text>
+            <View style={styles.containerBotoes}>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => deleteItemOracle(idItemOracle)}
+              >
+                <Text style={styles.textStyle}>Sim</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Cancelar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
 
-  pgContainer: {
+  viewCentralizada: {
     width: '100%',
     height: '127%',
-    //backgroundColor: 'yellow',
+    justifyContent: "center",
+    alignItems: "center",
+    //marginTop: 22
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    width: '70%',
+    margin: 20,
+    backgroundColor: "#444444",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+    width: '45%'
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    color: 'white'
+  },
+  containerBotoes: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    //backgroundColor: 'red'
   },
   container: {
     //display: 'flex',
