@@ -1,5 +1,5 @@
 import { React, useState } from 'react'
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, ToastAndroid, Image } from 'react-native';
 import axios from 'axios';
 import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
@@ -31,7 +31,6 @@ export default function Previsoes(props) {
       .then(postPrevisao())
       .then(props.definirCidade(cidade))
       .then(setCidade(''))
-      .then(showToast())
       .catch(erro => console.log(erro));
   };
 
@@ -56,34 +55,49 @@ export default function Previsoes(props) {
     }
   }
 
-  const showToast = () => {
-    ToastAndroid.show("Consulta cadastrada no histórico.", ToastAndroid.LONG);
-  };
+  const getBackgroundColor = (itemTime) => {
+
+    return (itemTime > 18 || itemTime < 6) ? 'black' : '#00CBFE'
+
+  }
 
 
 
   const renderItem = ({ item }) => (
-    <ListItem bottomDivider>
-      <Icon
+    <ListItem bottomDivider containerStyle={{
+      backgroundColor: '#ECECEC', marginBottom: '3%',
+      marginLeft: '5%', marginRight: '5%', paddingLeft: '5%',
+      borderRadius: 5, shadowColor: 'gray', shadowOpacity: .1,
+      shadowOffset: { width: 5, height: 5 }
+    }}>
+      {/* <Icon
         name={verificarIcone(item.weather[0].main)}
         type='feather'
         color='#517fa4'
         style={{ marginStart: '10%' }}
-      />
+      /> */}
+      <Image style={{
+        width: 100,
+        height: 60,
+        backgroundColor: getBackgroundColor(moment(item.dt_txt).locale('pt-br').hour()),
+        borderRadius: 30,
+        marginLeft: '3%',
+      }}
+        source={{ uri: `http:openweathermap.org/img/wn/${item.weather[0].icon}@2x.png` }} />
       <ListItem.Content style={styles.cardInfos}>
-        <ListItem.Title style={{color: '#767676'}}>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
+        <ListItem.Title style={{ color: '#767676', textAlign: 'center', maxWidth: '70%' }}>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
         <View style={styles.temperaturas}>
           <View style={styles.maxmin}>
-            <Text style={{ textAlign: 'center', color: '#FF3F00' }}>Temp. Max: </Text>
-            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676' }}>{item.main.temp_max} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center', color: '#FF3F00' }}>Max:</Text>
+            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676', fontSize: 18 }}>{item.main.temp_max}°C</ListItem.Subtitle>
           </View>
           <View style={styles.maxmin}>
-            <Text style={{ textAlign: 'center', color: '#7393B3' }}>Temp. Min: </Text>
-            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676' }}>{item.main.temp_min} °C</ListItem.Subtitle>
+            <Text style={{ textAlign: 'center', color: '#7393B3' }}>Min:</Text>
+            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676', fontSize: 18 }}>{item.main.temp_min}°C</ListItem.Subtitle>
           </View>
         </View>
       </ListItem.Content>
-      <ListItem.Chevron />
+      {/* <ListItem.Chevron /> */}
     </ListItem>
   )
 
@@ -129,7 +143,8 @@ const styles = StyleSheet.create({
     //   backgroundColor: 'steelblue',
   },
   local: {
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 5,
     fontSize: 32,
     color: '#1434A4',
     textAlign: 'center'
@@ -139,7 +154,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginTop: 5,
     height: 30,
-    backgroundColor: '#89CFF0',
+    backgroundColor: '#87CEEB',
     alignSelf: 'center',
     borderRadius: 15,
   },
@@ -149,6 +164,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'gray',
     alignSelf: 'center',
+    marginTop: 10,
     //textAlign: 'end'
   },
   cardInfos: {
@@ -166,5 +182,9 @@ const styles = StyleSheet.create({
     //backgroundColor: 'yellow',
     textAlign: 'center',
     padding: 5
+  },
+  tinyLogo: {
+
+
   }
 });
