@@ -1,4 +1,4 @@
-import { StyleSheet, StatusBar, View } from 'react-native';
+import { StyleSheet, StatusBar, View, ScrollView } from 'react-native';
 import Previsoes from './components/Previsoes';
 import Historico from './components/Historico';
 import { React, useState } from 'react';
@@ -48,13 +48,9 @@ const styles = StyleSheet.create({
   container: {
     //flex: 1,
     width: '100%',
-    height: '80%',
-    backgroundColor: '#000',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  previsoes: {
-    //flex: 1,
-    backgroundColor: 'blue'
+    height: '83%',
+    //backgroundColor: 'blue',
+    //alignItems: 'center',
+    justifyContent: 'center',
   }
 });

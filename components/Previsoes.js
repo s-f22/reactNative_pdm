@@ -1,10 +1,12 @@
 import { React, useState } from 'react'
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, ToastAndroid, Image } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Keyboard, Image } from 'react-native';
 import axios from 'axios';
 import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
 import { color } from '@rneui/themed/dist/config';
+import * as Animatable from 'react-native-animatable'
+import { TouchableWithoutFeedback } from 'react-native-web';
 
 
 export default function Previsoes(props) {
@@ -29,6 +31,7 @@ export default function Previsoes(props) {
         }
       })
       .then(postPrevisao())
+      .then(Keyboard.dismiss)
       .then(props.definirCidade(cidade))
       .then(setCidade(''))
       .catch(erro => console.log(erro));
@@ -55,7 +58,7 @@ export default function Previsoes(props) {
     }
   }
 
-  const getBackgroundColor = (itemTime) => {
+  const checkBackgroundColor = (itemTime) => {
 
     return (itemTime > 18 || itemTime < 6) ? 'black' : '#00CBFE'
 
@@ -64,72 +67,79 @@ export default function Previsoes(props) {
 
 
   const renderItem = ({ item }) => (
-    <ListItem bottomDivider containerStyle={{
-      backgroundColor: '#ECECEC', marginBottom: '3%',
-      marginLeft: '5%', marginRight: '5%', paddingLeft: '5%',
-      borderRadius: 5, shadowColor: 'gray', shadowOpacity: .1,
-      shadowOffset: { width: 5, height: 5 }
-    }}>
-      {/* <Icon
+    <Animatable.View animation="fadeInUpBig">
+      <ListItem bottomDivider containerStyle={{
+        backgroundColor: '#ECECEC', marginBottom: '2%',
+        marginLeft: '5%', marginRight: '5%', paddingLeft: '5%',
+        borderRadius: 5, shadowColor: 'gray', shadowOpacity: .1,
+        shadowOffset: { width: 5, height: 5 }
+
+      }}>
+        {/* <Icon
         name={verificarIcone(item.weather[0].main)}
         type='feather'
         color='#517fa4'
         style={{ marginStart: '10%' }}
       /> */}
-      <Image style={{
-        width: 100,
-        height: 60,
-        backgroundColor: getBackgroundColor(moment(item.dt_txt).locale('pt-br').hour()),
-        borderRadius: 30,
-        marginLeft: '3%',
-      }}
-        source={{ uri: `http:openweathermap.org/img/wn/${item.weather[0].icon}@2x.png` }} />
-      <ListItem.Content style={styles.cardInfos}>
-        <ListItem.Title style={{ color: '#767676', textAlign: 'center', maxWidth: '70%' }}>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
-        <View style={styles.temperaturas}>
-          <View style={styles.maxmin}>
-            <Text style={{ textAlign: 'center', color: '#FF3F00' }}>Max:</Text>
-            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676', fontSize: 18 }}>{item.main.temp_max}°C</ListItem.Subtitle>
+        <Image style={{
+          width: 100,
+          height: 60,
+          backgroundColor: checkBackgroundColor(moment(item.dt_txt).locale('pt-br').hour()),
+          borderRadius: 30,
+          marginLeft: '3%',
+        }}
+          source={{ uri: `http:openweathermap.org/img/wn/${item.weather[0].icon}@2x.png` }} />
+        <ListItem.Content style={styles.cardInfos}>
+          <ListItem.Title style={{ color: '#767676', textAlign: 'center', maxWidth: '70%', fontSize: 18 }}>{moment(item.dt_txt).locale('pt-br').format('LLL')}</ListItem.Title>
+          <View style={styles.temperaturas}>
+            <View style={styles.maxmin}>
+              <Text style={{ textAlign: 'center', color: '#FF3F00' }}>Max:</Text>
+              <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676', fontSize: 20 }}>{item.main.temp_max}°C</ListItem.Subtitle>
+            </View>
+            <View style={styles.maxmin}>
+              <Text style={{ textAlign: 'center', color: '#7393B3' }}>Min:</Text>
+              <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676', fontSize: 20 }}>{item.main.temp_min}°C</ListItem.Subtitle>
+            </View>
           </View>
-          <View style={styles.maxmin}>
-            <Text style={{ textAlign: 'center', color: '#7393B3' }}>Min:</Text>
-            <ListItem.Subtitle style={{ textAlign: 'center', color: '#767676', fontSize: 18 }}>{item.main.temp_min}°C</ListItem.Subtitle>
-          </View>
-        </View>
-      </ListItem.Content>
-      {/* <ListItem.Chevron /> */}
-    </ListItem>
+        </ListItem.Content>
+        {/* <ListItem.Chevron /> */}
+      </ListItem>
+    </Animatable.View>
   )
 
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        placeholder='Insira o nome da cidade'
-        value={cidade}
-        onChangeText={text => setCidade(text)}
-        style={styles.inputCidade}
-      />
-      {/* <Button title="Toggle Toast" onPress={() => showToast()} /> */}
-      <TouchableOpacity
-        onPress={() => getPrevisao()}
-        style={styles.botaoPesquisar}
-      >
-        <Text style={{ textAlign: 'center', color: 'white' }} >Pesquisar</Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity
+    <TouchableWithoutFeedback  accessible={false}>
+      <View style={styles.container}>
+        <TextInput
+          placeholder='Insira o nome da cidade'
+          value={cidade}
+          onChangeText={text => setCidade(text)}
+          style={styles.inputCidade}
+          onFocus={() => setResponse({})}
+          
+        />
+        {/* <Button title="Toggle Toast" onPress={() => showToast()} /> */}
+        <TouchableOpacity
+          onPress={() => getPrevisao()}
+          style={styles.botaoPesquisar}
+        >
+          <Text style={{ textAlign: 'center', color: 'white' }} >Pesquisar</Text>
+        </TouchableOpacity>
+        {/* <TouchableOpacity
         onPress={() => postPrevisao()}
         style={styles.botaoPesquisar}
       >
         <Text style={{ textAlign: 'center' }} >Cadastrar pesquisa</Text>
       </TouchableOpacity> */}
-      {Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>}
-      <FlatList
-        data={response.list}
-        renderItem={renderItem}
-        keyExtractor={item => item.dt}
-      />
-    </View>
+        {Object.keys(response).length > 0 && <Text style={styles.local}>{response.city.name}</Text>}
+        <FlatList
+          data={response.list}
+          renderItem={renderItem}
+          keyExtractor={item => item.dt}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -143,7 +153,7 @@ const styles = StyleSheet.create({
     //   backgroundColor: 'steelblue',
   },
   local: {
-    marginTop: 15,
+    marginTop: 5,
     marginBottom: 5,
     fontSize: 32,
     color: '#1434A4',

@@ -3,10 +3,11 @@ import { View, FlatList, StyleSheet, Text, TouchableOpacity, ToastAndroid, Alert
 import axios from 'axios';
 import moment from 'moment/min/moment-with-locales';
 import { Icon } from '@rneui/themed'
+import * as Animatable from 'react-native-animatable'
 
 export default function Historico(props) {
 
-  const [resposta, setResposta] = useState({});
+  const [resposta, setResposta] = useState([]);
   const [idItemOracle, serIdItemOracle] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -18,7 +19,12 @@ export default function Historico(props) {
     axios(oracleUrl)
       .then(response => {
         if (response.status === 200) {
-          setResposta(response.data)
+          setResposta(response.data.items.sort(function (a, b) {
+            var dateA = a.data_previsao;
+            var dateB = b.data_previsao;
+            return dateA < dateB ? 1 : -1; // ? -1 : 1 para ordem crescente/decrescente order
+          }))
+          
         }
       })
       //.then(console.log(resposta.items))
@@ -58,9 +64,10 @@ const acionarExclusao = (idOracle) => {
 }
 
 
+
   const Item = ({ cidade, data_previsao, cod_previsao }) => (
 
-    <View style={styles.item}>
+    <View  style={styles.item}>
 
       <Text style={styles.city}>{cidade}</Text>
       <View style={styles.dadosDataConsulta}>
@@ -93,7 +100,7 @@ const acionarExclusao = (idOracle) => {
     }, 2000);
     //console.log("A CIDADE no historico É: ", props.cidadeAtual)
     return (
-      setResposta({})
+      setResposta([])
     )
   }, [props.cidadeAtual]);
 
@@ -102,7 +109,7 @@ const acionarExclusao = (idOracle) => {
     <View style={styles.viewCentralizada}>
       <Text style={styles.titulo}>Suas pesquisas recentes:</Text>
       <FlatList
-        data={resposta.items}
+        data={resposta}
         renderItem={renderItem}
         keyExtractor={item => item.cod_previsao}
         style={styles.container}
@@ -148,7 +155,7 @@ const styles = StyleSheet.create({
 
   viewCentralizada: {
     width: '100%',
-    height: '127%',
+    height: '121%',
     justifyContent: "center",
     alignItems: "center",
     //marginTop: 22
@@ -255,7 +262,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: 'center',
     width: '50%',
-    //marginHorizontal: '10%'
     //backgroundColor: 'yellow'
   },
   titulo: {
@@ -263,6 +269,7 @@ const styles = StyleSheet.create({
     color: '#767676',
     textAlign: 'center',
     marginBottom: '2%',
+    marginTop: '2%'
   },
   btnExcluir: {
     padding: 7,
