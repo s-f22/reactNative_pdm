@@ -18,4 +18,4 @@
 
 :green_book: Projeto P2
 
-:pencil: POO - Trabalho desenvolvido em grupo 
+:pencil: PDM - Trabalho desenvolvido em grupo 
