@@ -5,7 +5,6 @@ import { ListItem, Icon } from '@rneui/themed'
 import moment from 'moment/min/moment-with-locales';
 import { verificarIcone } from '../functions/verificarIcones';
 import { color } from '@rneui/themed/dist/config';
-import * as Animatable from 'react-native-animatable'
 import { TouchableWithoutFeedback } from 'react-native-web';
 
 
@@ -13,13 +12,13 @@ export default function Previsoes(props) {
 
   const mockData = require('../assets/mock.json')
   const baseUrl = "api.openweathermap.org/data/2.5/forecast"
-  const apiKey = "cd6a6dcf37771d34beb24817c6c3fd40";
+  const apiKey = "INSERIR";
 
   const [response, setResponse] = useState({});
   const [cidade, setCidade] = useState('');
 
   const requestUrl = `https://${baseUrl}?q=${cidade}&cnt&units=metric&lang=pt_br&appid=${apiKey}`;
-  const oracleUrl = 'https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/'
+  const oracleUrl = "INSERIR"
 
   moment.locale('pt-br');
 
@@ -67,7 +66,7 @@ export default function Previsoes(props) {
 
 
   const renderItem = ({ item }) => (
-    <Animatable.View animation="fadeInUpBig">
+    <View >
       <ListItem bottomDivider containerStyle={{
         backgroundColor: '#ECECEC', marginBottom: '2%',
         marginLeft: '5%', marginRight: '5%', paddingLeft: '5%',
@@ -104,12 +103,12 @@ export default function Previsoes(props) {
         </ListItem.Content>
         {/* <ListItem.Chevron /> */}
       </ListItem>
-    </Animatable.View>
+    </View>
   )
 
 
   return (
-    <TouchableWithoutFeedback  accessible={false}>
+    <TouchableWithoutFeedback  accessible={true}>
       <View style={styles.container}>
         <TextInput
           placeholder='Insira o nome da cidade'

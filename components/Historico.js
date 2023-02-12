@@ -3,7 +3,7 @@ import { View, FlatList, StyleSheet, Text, TouchableOpacity, ToastAndroid, Alert
 import axios from 'axios';
 import moment from 'moment/min/moment-with-locales';
 import { Icon } from '@rneui/themed'
-import * as Animatable from 'react-native-animatable'
+
 
 export default function Historico(props) {
 
@@ -19,12 +19,15 @@ export default function Historico(props) {
     axios(oracleUrl)
       .then(response => {
         if (response.status === 200) {
-          setResposta(response.data.items.sort(function (a, b) {
-            var dateA = a.data_previsao;
-            var dateB = b.data_previsao;
-            return dateA < dateB ? 1 : -1; // ? -1 : 1 para ordem crescente/decrescente order
-          }))
-          
+          setResposta(
+            response.data.items.sort(
+              (a, b) => {
+                var dateA = a.data_previsao;
+                var dateB = b.data_previsao;
+                return dateA < dateB ? 1 : -1;
+              }
+            )
+          )
         }
       })
       //.then(console.log(resposta.items))
@@ -52,22 +55,22 @@ export default function Historico(props) {
     ToastAndroid.show("Item removido do histórico.", ToastAndroid.LONG);
   };
 
-  
+
 
   <View style={styles.centeredView}>
 
   </View>
 
-const acionarExclusao = (idOracle) => {
-  setModalVisible(true);
-  serIdItemOracle(idOracle)
-}
+  const acionarExclusao = (idOracle) => {
+    setModalVisible(true);
+    serIdItemOracle(idOracle)
+  }
 
 
 
   const Item = ({ cidade, data_previsao, cod_previsao }) => (
 
-    <View  style={styles.item}>
+    <View style={styles.item}>
 
       <Text style={styles.city}>{cidade}</Text>
       <View style={styles.dadosDataConsulta}>
