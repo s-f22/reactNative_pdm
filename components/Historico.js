@@ -11,7 +11,7 @@ export default function Historico(props) {
   const [idItemOracle, serIdItemOracle] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const oracleUrl = "https://gb127a7e9e901c7-projetopdmrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/historico_previsoes/"
+  const oracleUrl = "INSERIR"
 
   moment.locale('pt-br');
 
